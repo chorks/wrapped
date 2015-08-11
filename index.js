@@ -94,5 +94,5 @@ function sync(fn, done) {
  */
 
 function bindify (fn, thisArg, args) {
-  return fn.bind.apply(fn, [thisArg].concat(args))
+  return fn.bind.apply(fn, [thisArg].concat(args));
 }
