@@ -8,14 +8,18 @@
   },
   "keywords": [
     "browser",
-    "wrap",
-    "generator"
+    "generator",
+    "wrap"
   ],
   "author": "Matthew Mueller <mattmuelle@gmail.com>",
   "repository": "MatthewMueller/wrapped",
   "dependencies": {
-    "co": "3.1.0",
-    "sliced": "^1.0.1"
+    "async-done": "^1.1.0",
+    "co": "^4.6.0",
+    "dezalgo": "^1.0.3",
+    "is-es6-generator-function": "^1.0.0",
+    "is-promise": "^2.0.0",
+    "manage-arguments": "^1.0.0"
   },
   "devDependencies": {
     "generator-support": "0.0.1"

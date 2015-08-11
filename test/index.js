@@ -2,9 +2,8 @@
  * Module Dependencies
  */
 
-var support = require('generator-support');
 var assert = require('assert');
-var wrap = require('..');
+var wrap = require('../index');
 
 /**
  * Tests

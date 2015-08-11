@@ -2,9 +2,13 @@
  * Module Dependencies
  */
 
-var sliced = require('sliced');
-var noop = function(){};
+var isGenFn = require('is-es6-generator-function');
+var isPromise = require('is-promise');
+var sliced = require('manage-arguments');
+var asyncDone = require('async-done');
+var dezalgo = require('dezalgo');
 var co = require('co');
+var noop = function(){};
 
 /**
  * Export `wrapped`
@@ -28,7 +32,7 @@ function wrapped(fn) {
     var ctx = this;
 
     // done
-    var done = typeof last == 'function' ? args.pop() : noop;
+    var done = dezalgo(typeof last == 'function' ? args.pop() : noop);
 
     // nothing
     if (!fn) {
@@ -37,17 +41,15 @@ function wrapped(fn) {
 
     // async
     if (fn.length > args.length) {
-      // NOTE: this only handles uncaught synchronous errors
-      try {
-        return fn.apply(ctx, args.concat(done));
-      } catch (e) {
-        return done(e);
-      }
+      fn = bindify(fn, ctx, args);
+      return asyncDone(fn, done);
     }
 
     // generator
-    if (generator(fn)) {
-      return co(fn).apply(ctx, args.concat(done));
+    if (isGenFn(fn)) {
+      return asyncDone(function () {
+        return co.apply(ctx, [fn].concat(args.concat(done)));
+      }, done);
     }
 
     // sync
@@ -76,8 +78,10 @@ function sync(fn, done) {
       return done(err);
     }
 
-    if (promise(ret)) {
-      ret.then(function (value) { done(null, value); }, done);
+    if (isPromise(ret)) {
+      return asyncDone(function () {
+        return ret;
+      }, done);
     } else {
       ret instanceof Error ? done(ret) : done(null, ret);
     }
@@ -85,44 +89,10 @@ function sync(fn, done) {
 }
 
 /**
- * Is `value` a generator?
- *
- * @param {Mixed} value
- * @return {Boolean}
- * @api private
+ * Bind multiple parameters to function
+ * with context
  */
 
-function generator(value) {
-  return value
-    && value.constructor
-    && 'GeneratorFunction' == value.constructor.name;
-}
-
-
-/**
- * Is `value` a promise?
- *
- * @param {Mixed} value
- * @return {Boolean}
- * @api private
- */
-
-function promise(value) {
-  return value && 'function' == typeof value.then;
-}
-
-/**
- * Determi
- */
-
-/**
- * Once
- */
-
-function once(fn) {
-  return function() {
-    var ret = fn.apply(this, arguments);
-    fn = noop;
-    return ret;
-  };
+function bindify (fn, thisArg, args) {
+  return fn.bind.apply(fn, [thisArg].concat(args))
 }
