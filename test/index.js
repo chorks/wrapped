@@ -5,6 +5,7 @@
 var Bluebird = require('bluebird')
 var assert = require('assert');
 var wrap = require('../index');
+var fs = require('fs');
 
 /**
  * Tests
@@ -14,9 +15,9 @@ describe('wrap-fn', function() {
   describe('noop', function() {
     it('should work if fn is undefined', function(done) {
       function next(err, a, b) {
-        assert(this.ctx = 'ctx');
-        assert('a' == a);
-        assert('b' == b);
+        assert(this.ctx === 'ctx');
+        assert('a' === a);
+        assert('b' === b);
         assert(!err);
         done();
       }
@@ -30,15 +31,15 @@ describe('wrap-fn', function() {
       var called = 0;
 
       function sync(a, b) {
-        assert(this.ctx = 'ctx');
-        assert('a' == a);
-        assert('b' == b);
+        assert(this.ctx === 'ctx');
+        assert('a' === a);
+        assert('b' === b);
         called++;
         return 'a';
       }
 
       function next(err, a) {
-        assert('a' == a);
+        assert('a' === a);
         assert(called);
         assert(!err);
         done();
@@ -52,9 +53,9 @@ describe('wrap-fn', function() {
 
       function sync(a, b) {
         called++;
-        assert(this.ctx = 'ctx');
-        assert('a' == a);
-        assert('b' == b);
+        assert(this.ctx === 'ctx');
+        assert('a' === a);
+        assert('b' === b);
 
         return new Error('some error');
       }
@@ -62,7 +63,7 @@ describe('wrap-fn', function() {
       function next(err) {
         assert(err);
         assert(called);
-        assert('some error' == err.message);
+        assert('some error' === err.message);
         done();
       }
 
@@ -74,9 +75,9 @@ describe('wrap-fn', function() {
 
       function sync(a, b) {
         called++;
-        assert(this.ctx = 'ctx');
-        assert('a' == a);
-        assert('b' == b);
+        assert(this.ctx === 'ctx');
+        assert('a' === a);
+        assert('b' === b);
 
         throw new Error('some error');
       }
@@ -84,7 +85,7 @@ describe('wrap-fn', function() {
       function next(err) {
         assert(err);
         assert(called);
-        assert('some error' == err.message);
+        assert('some error' === err.message);
         done();
       }
 
@@ -95,15 +96,15 @@ describe('wrap-fn', function() {
       var called = 0;
 
       function promise(a) {
-        assert(this.ctx = 'ctx');
-        assert('a' == a);
+        assert(this.ctx === 'ctx');
+        assert('a' === a);
         called++;
 
         return Bluebird.resolve(a);
       }
 
       function next(err, a) {
-        assert('a' == a);
+        assert('a' === a);
         assert(called);
         assert(!err);
         done();
@@ -116,9 +117,9 @@ describe('wrap-fn', function() {
       var called = 0;
 
       function promise(a, b) {
-        assert(this.ctx = 'ctx');
-        assert('a' == a);
-        assert('b' == b);
+        assert(this.ctx === 'ctx');
+        assert('a' === a);
+        assert('b' === b);
         called++;
 
         return Bluebird.reject(new Error('some error'));
@@ -127,7 +128,7 @@ describe('wrap-fn', function() {
       function next(err) {
         assert(err);
         assert(called);
-        assert('some error' == err.message);
+        assert('some error' === err.message);
         done();
       }
 
@@ -140,9 +141,9 @@ describe('wrap-fn', function() {
       var called = 0;
 
       function async(a, b, fn) {
-        assert(this.ctx = 'ctx');
-        assert('a' == a);
-        assert('b' == b);
+        assert(this.ctx === 'ctx');
+        assert('a' === a);
+        assert('b' === b);
         called++;
         fn(null, a, b)
       }
@@ -150,8 +151,8 @@ describe('wrap-fn', function() {
       function next(err, a, b) {
         assert(!err);
         assert(called);
-        assert('a' == a);
-        assert('b' == b);
+        assert('a' === a);
+        assert('b' === b);
         done();
       }
 
@@ -163,16 +164,16 @@ describe('wrap-fn', function() {
 
       function async(a, b, fn) {
         called++;
-        assert(this.ctx = 'ctx');
-        assert('a' == a);
-        assert('b' == b);
+        assert(this.ctx === 'ctx');
+        assert('a' === a);
+        assert('b' === b);
         fn(new Error('some error'));
       }
 
       function next(err, a, b) {
         assert(err);
         assert(called);
-        assert('some error' == err.message);
+        assert('some error' === err.message);
         done();
       }
 
@@ -184,16 +185,16 @@ describe('wrap-fn', function() {
 
       function async(a, b, fn) {
         called++;
-        assert(this.ctx = 'ctx');
-        assert('a' == a);
-        assert('b' == b);
+        assert(this.ctx === 'ctx');
+        assert('a' === a);
+        assert('b' === b);
         throw new Error('some error');
       }
 
       function next(err, a, b) {
         assert(err);
         assert(called);
-        assert('some error' == err.message);
+        assert('some error' === err.message);
         done();
       }
 
@@ -206,9 +207,9 @@ describe('wrap-fn', function() {
       var called = 0;
 
       function *gen(a, b) {
-        assert(this.ctx = 'ctx');
-        assert('a' == a);
-        assert('b' == b);
+        assert(this.ctx === 'ctx');
+        assert('a' === a);
+        assert('b' === b);
         yield process.nextTick;
         called++;
         return a;
@@ -217,7 +218,7 @@ describe('wrap-fn', function() {
       function next(err, a) {
         assert(!err);
         assert(called);
-        assert('a' == a);
+        assert('a' === a);
         done();
       }
 
@@ -229,9 +230,9 @@ describe('wrap-fn', function() {
 
       function *gen(a, b) {
         called++;
-        assert(this.ctx = 'ctx');
-        assert('a' == a);
-        assert('b' == b);
+        assert(this.ctx === 'ctx');
+        assert('a' === a);
+        assert('b' === b);
         throw new Error('some error');
         return a;
       }
@@ -240,11 +241,31 @@ describe('wrap-fn', function() {
         assert(!a);
         assert(err);
         assert(called);
-        assert('some error' == err.message);
+        assert('some error' === err.message);
         done();
       }
 
       wrap(gen).call({ ctx: 'ctx' }, 'a', 'b', next);
+    });
+  });
+
+  describe('stream', function() {
+    it('handle a returned stream and cb by only calling callback once', function (done) {
+      var called = 0;
+
+      function stream (a) {
+        called++;
+        assert(this.ctx === 'ctx');
+        assert(a === 2);
+        return fs.createReadStream('./index.js');
+      }
+
+      function next(err, a) {
+        assert(called === 1);
+        done();
+      }
+
+      wrap(stream).call({ ctx: 'ctx' }, 2, next);
     });
   });
 });
