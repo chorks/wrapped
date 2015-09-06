@@ -48,7 +48,7 @@ describe('wrap-fn', function() {
       wrap(sync).call({ ctx: 'ctx' }, 'a', 'b', next);
     });
 
-    it('handle errors', function(done) {
+    it('handle returned errors', function(done) {
       var called = 0;
 
       function sync(a, b) {
@@ -70,7 +70,7 @@ describe('wrap-fn', function() {
       wrap(sync).call({ ctx: 'ctx' }, 'a', 'b', next);
     });
 
-    it('catch synchronous errors', function(done) {
+    it('handle thrown errors', function(done) {
       var called = 0;
 
       function sync(a, b) {
@@ -261,6 +261,7 @@ describe('wrap-fn', function() {
       }
 
       function next(err, a) {
+        assert(!err)
         assert(called === 1);
         done();
       }

@@ -19,6 +19,7 @@
     "dezalgo": "^1.0.3",
     "is-es6-generator-function": "^1.0.0",
     "is-promise": "^2.0.0",
+    "is-stream": "^1.0.1",
     "manage-arguments": "^1.0.0"
   },
   "devDependencies": {
