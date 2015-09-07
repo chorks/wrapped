@@ -207,6 +207,7 @@ describe('wrap-fn', function() {
       var called = 0;
 
       function *gen(a, b) {
+        assert(arguments.length === 2);
         assert(this.ctx === 'ctx');
         assert('a' === a);
         assert('b' === b);

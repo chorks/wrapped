@@ -15,7 +15,6 @@
   "repository": "MatthewMueller/wrapped",
   "dependencies": {
     "async-done": "^1.1.0",
-    "async-settle": "^0.2.1",
     "co": "^4.6.0",
     "dezalgo": "^1.0.3",
     "is-es6-generator-function": "^1.0.0",

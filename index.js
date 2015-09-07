@@ -6,7 +6,6 @@ var isGenFn = require('is-es6-generator-function');
 var isPromise = require('is-promise');
 var isStream = require('is-stream');
 var sliced = require('sliced');
-var asyncSettle = require('async-settle');
 var asyncDone = require('async-done');
 var dezalgo = require('dezalgo');
 var co = require('co');
@@ -27,7 +26,7 @@ module.exports = wrapped;
  * @api public
  */
 
-function wrapped(fn, settle) {
+function wrapped(fn) {
   function wrap() {
     var args = sliced(arguments);
     var last = args[args.length - 1];
@@ -35,7 +34,6 @@ function wrapped(fn, settle) {
 
     // done
     var done = dezalgo(typeof last == 'function' ? args.pop() : noop);
-    var asyncRun = settle ? asyncSettle : asyncDone
 
     // nothing
     if (!fn) {
@@ -44,19 +42,19 @@ function wrapped(fn, settle) {
 
     // async
     if (fn.length > args.length) {
-      // fn = bindify(fn, ctx, args);
-      return asyncRun(fn, done);
+      fn = bindify(fn, ctx, args);
+      return asyncDone(fn, done);
     }
 
     // generator
     if (isGenFn(fn)) {
-      return asyncRun(function () {
-        return co.apply(ctx, [fn].concat(args.concat(done)));
+      return asyncDone(function () {
+        return co.apply(ctx, [fn].concat(args));
       }, done);
     }
 
     // sync
-    return sync(fn, done, asyncRun).apply(ctx, args);
+    return sync(fn, done).apply(ctx, args);
   }
 
   return wrap;
@@ -71,7 +69,7 @@ function wrapped(fn, settle) {
  * @api private
  */
 
-function sync (fn, done, asyncRun) {
+function sync (fn, done) {
   return function () {
     var ret;
 
@@ -82,7 +80,7 @@ function sync (fn, done, asyncRun) {
     }
 
     if (isPromise(ret) || isStream(ret)) {
-      return asyncRun(function () {
+      return asyncDone(function () {
         return ret;
       }, done);
     }
